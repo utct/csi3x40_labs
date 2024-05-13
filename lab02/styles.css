@@ -1,8 +1,35 @@
-# csi3x40_labs
-CSI 3140 lab
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+}
 
-# Lab 1: Development Env using Git, GitHub
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+}
 
-In this lab we will be setting up our development environment using
-[Git](https://git-scm.com/) for source code control and
-to push / pull code to [GitHub](https://github.com/) to enable collaboration with others.
+.title{
+    font-size: larger;
+}
+
+h2, h3 {
+    border-bottom: 1px solid black;
+    padding-bottom: 5px;
+}
+
+ul {
+    list-style-type: none; 
+    padding: 0;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+p {
+    margin-bottom: 20px;
+}

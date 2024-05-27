@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1D Pacman Game</title>
+    <style>
+        .game-board {
+            display: flex;
+        }
+        .game-cell {
+            width: 35px;
+            height: 35px;
+            border: 0.5px solid #000;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>1D Pacman Game</h1>
+    <div id="game-board" class="game-board"></div>
+    <script>
+        function createGame(n) {
+            if (n < 4) {
+                console.log("The game board must be at least 4 squares long.");
+                return [];
+            }
+
+            let gameBoard = Array(n).fill(".");
+            let pacmanIndex = Math.floor(Math.random() * n);
+            let ghostIndex, fruitIndex;
+
+            do {
+                ghostIndex = Math.floor(Math.random() * n);
+            } while (ghostIndex === pacmanIndex);
+
+            do {
+                fruitIndex = Math.floor(Math.random() * n);
+            } while (fruitIndex === pacmanIndex || fruitIndex === ghostIndex);
+
+            gameBoard[pacmanIndex] = "C";
+            gameBoard[ghostIndex] = "^";
+            gameBoard[fruitIndex] = "@";
+
+            console.log(gameBoard);
+
+            renderGame(gameBoard);
+
+            return gameBoard;
+        }
+
+        function renderGame(gameBoard) {
+            const gameBoardContainer = document.getElementById('game-board');
+            gameBoardContainer.innerHTML = ''; 
+            gameBoard.forEach(cell => {
+                const cellElement = document.createElement('div');
+                cellElement.className = 'game-cell';
+                cellElement.textContent = cell;
+                gameBoardContainer.appendChild(cellElement);
+            });
+        }
+
+        function moveLeft(game) {
+            let pacmanIndex = game.indexOf("C");
+            if (pacmanIndex > 0) {
+                game[pacmanIndex] = "";
+                game[pacmanIndex - 1] = "C";
+            }
+            renderGame(game);
+            return game;
+        }
+
+        function moveRight(game) {
+            let pacmanIndex = game.indexOf("C");
+            if (pacmanIndex < game.length - 1) {
+                game[pacmanIndex] = "";
+                game[pacmanIndex + 1] = "C";
+            }
+            renderGame(game);
+            return game;
+        }
+    </script>
+</body>
+</html>

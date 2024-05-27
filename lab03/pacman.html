@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1D Pacman Game</title>
+    <style>
+        .game-board {
+            display: flex;
+        }
+        .game-cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>1D Pacman Game</h1>
+    <div id="game-board" class="game-board"></div>
+    <div id="score">Score: 0</div>
+    <script>
+        let score = 0;
+        let level = 1;
+        let ghostMoveInterval;
+
+        function createGame(n) {
+            if (n < 4) {
+                console.log("The game board must be at least 4 squares long.");
+                return [];
+            }
+
+            let gameBoard = Array(n).fill(".");
+            let pacmanIndex = Math.floor(Math.random() * n);
+            let ghostIndex, fruitIndex;
+
+            do {
+                ghostIndex = Math.floor(Math.random() * n);
+            } while (ghostIndex === pacmanIndex);
+
+            do {
+                fruitIndex = Math.floor(Math.random() * n);
+            } while (fruitIndex === pacmanIndex || fruitIndex === ghostIndex);
+
+            gameBoard[pacmanIndex] = "C";
+            gameBoard[ghostIndex] = "^";
+            gameBoard[fruitIndex] = "@";
+
+            console.log(gameBoard);
+
+            renderGame(gameBoard);
+            updateScore();
+
+            // ghost moves every 2 secs
+            clearInterval(ghostMoveInterval);
+            ghostMoveInterval = setInterval(() => {
+                gameBoard = moveGhost(gameBoard);
+            }, 2000);
+
+            return gameBoard;
+        }
+
+        function renderGame(gameBoard) {
+            const gameBoardContainer = document.getElementById('game-board');
+            gameBoardContainer.innerHTML = '';
+            gameBoard.forEach(cell => {
+                const cellElement = document.createElement('div');
+                cellElement.className = 'game-cell';
+                cellElement.textContent = cell;
+                gameBoardContainer.appendChild(cellElement);
+            });
+        }
+
+        function updateScore() {
+            const scoreElement = document.getElementById('score');
+            if (scoreElement) {
+                scoreElement.textContent = `Score: ${score} | Level: ${level}`;
+            }
+        }
+
+        function checkLevelCompletion(game) {
+            return !game.includes(".");
+        }
+
+        function checkGameOver(game) {
+            if (!game.includes("C")) {
+                clearInterval(ghostMoveInterval);
+                alert("Game Over :(");
+                return true;
+            }
+            return false;
+        }
+
+        function moveLeft(game) {
+            let pacmanIndex = game.indexOf("C");
+            if (pacmanIndex > 0) {
+                if (game[pacmanIndex - 1] === ".") {
+                    score += 1; 
+                } else if (game[pacmanIndex - 1] === "^") {
+                    game[pacmanIndex] = "";
+                    renderGame(game);
+                    checkGameOver(game);
+                    return game;
+                }
+                game[pacmanIndex] = "";
+                game[pacmanIndex - 1] = "C";
+            }
+            renderGame(game);
+            updateScore();
+            
+            if (checkLevelCompletion(game)) {
+                level += 1;
+                game = createGame(game.length); 
+            }
+            return game;
+        }
+
+        function moveRight(game) {
+            let pacmanIndex = game.indexOf("C");
+            if (pacmanIndex < game.length - 1) {
+                if (game[pacmanIndex + 1] === ".") {
+                    score += 1; 
+                } else if (game[pacmanIndex + 1] === "^") {
+                    game[pacmanIndex] = "";
+                    renderGame(game);
+                    checkGameOver(game);
+                    return game;
+                }
+                game[pacmanIndex] = "";
+                game[pacmanIndex + 1] = "C";
+            }
+            renderGame(game);
+            updateScore();
+            
+            if (checkLevelCompletion(game)) {
+                level += 1;
+                game = createGame(game.length); 
+            }
+
+            return game;
+        }
+
+        function moveGhost(game) {
+            let ghostIndex = game.indexOf("^");
+            let direction = Math.random() < 0.5 ? -1 : 1; 
+            let newGhostIndex = (ghostIndex + direction + game.length) % game.length;
+
+            if (game[newGhostIndex] === "C") {
+                game[ghostIndex] = "";
+                renderGame(game);
+                checkGameOver(game);
+                return game;
+            }
+
+            if (game[newGhostIndex] === "." || game[newGhostIndex] === "@") {
+                game[ghostIndex] = game[newGhostIndex]; 
+                game[newGhostIndex] = "^";
+            }
+            renderGame(game);
+            return game;
+        }
+    </script>
+</body>
+</html>
